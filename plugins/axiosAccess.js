@@ -1,35 +1,9 @@
-const ACCESS_IDENTITY_ENDPOINT = '/cdn-cgi/access/get-identity'
-const TOKEN_TTL_MS = 5 * 60 * 1000
-
-let cachedToken = null
-let cachedAt = 0
-let inflightPromise = null
-
-function getAccessToken () {
-  if (cachedToken && (Date.now() - cachedAt) < TOKEN_TTL_MS) {
-    return cachedToken
-  }
-  if (!inflightPromise) {
-    inflightPromise = window.fetch(ACCESS_IDENTITY_ENDPOINT, {
-      credentials: 'include'
-    })
-      .then((response) => {
-        cachedAt = Date.now()
-        cachedToken = response.headers.get('CF-Access-Jwt-Assertion')
-        return cachedToken
-      })
-      .catch(() => null)
-      .finally(() => {
-        inflightPromise = null
-      })
-  }
-  return inflightPromise
-}
+import { getAccessToken } from '~/utils/accessToken'
 
 async function attachAccessCredentials (config) {
   config.withCredentials = true
   config.headers = config.headers || {}
-  if (!config.headers['CF-Access-Jwt-Assertion'] && typeof window !== 'undefined') {
+  if (!config.headers['CF-Access-Jwt-Assertion']) {
     const token = await getAccessToken()
     if (token) {
       config.headers['CF-Access-Jwt-Assertion'] = token

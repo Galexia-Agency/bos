@@ -165,6 +165,9 @@ import Toggle from '~/components/ui/UiToggle.vue'
 import Board from '~/components/Board'
 import projectModal from '~/components/modals/update/projectModal'
 import projectMoneyGraphsModel from '~/components/modals/display/projectMoneyGraphsModel'
+import { buildAccessHeaders } from '~/utils/accessToken'
+
+const MAX_FAILURES = 3
 
 export default {
   components: {
@@ -191,13 +194,13 @@ export default {
       showArchived: false,
       sseWorker: null,
       sse: null,
-      timeout: null
+      timeout: null,
+      sseFailureCount: 0
     }
   },
   computed: {
     ...mapState([
       'userInfo',
-      'isRenewingTokens',
       'projects'
     ]),
     ...mapGetters([
@@ -246,21 +249,6 @@ export default {
       return `Project has been with us for ${this.project.daysWithUs} days`
     }
   },
-  watch: {
-    isRenewingTokens (newVal) {
-      if (document.visibilityState === 'visible') {
-        if (newVal) {
-        // eslint-disable-next-line no-console
-          console.log('Stopping SSE due to renewing tokens and we need to send the new token with SSE')
-          this.sse_end()
-        } else {
-        // eslint-disable-next-line no-console
-          console.log('Starting SSE due to tokens now being renewed')
-          this.sse_start()
-        }
-      }
-    }
-  },
   mounted () {
     this.sse_start()
     document.addEventListener('visibilitychange', this.visibleChange)
@@ -286,11 +274,12 @@ export default {
       }
     },
     sse_start () {
-      this.timeout = window.setTimeout(() => {
-        if (!this.isRenewingTokens && document.visibilityState === 'visible') {
+      this.timeout = window.setTimeout(async () => {
+        if (document.visibilityState === 'visible') {
           const id = this.project.id
           const self = this
           const url = `https://api.galexia.agency/projects/sse?id=${id}`
+          this.sseFailureCount = 0
           if (window.Worker) {
             if (!this.sseWorker) {
               this.sseWorker = new Worker()
@@ -305,14 +294,22 @@ export default {
               this.sse_start()
             }
           } else if (!this.sse) {
+            const headers = await buildAccessHeaders()
             this.sse = new EventSourcePolyfill(url, {
-              withCredentials: false
+              withCredentials: true,
+              headers
             })
             this.sse.addEventListener(id, function (event) {
               self.sse_updateProject(JSON.parse(event.data)[0])
             }, {
               once: false,
               retry: 5000
+            })
+            this.sse.addEventListener('error', () => {
+              this.sseFailureCount += 1
+              if (this.sseFailureCount > MAX_FAILURES) {
+                this.sse_end()
+              }
             })
             // eslint-disable-next-line no-console
             console.log('Started SSE')
@@ -335,6 +332,7 @@ export default {
       } else if (this.sse) {
         this.sse.close()
         this.sse = null
+        this.sseFailureCount = 0
         // eslint-disable-next-line no-console
         console.log('Stopped SSE')
       }
