@@ -8,11 +8,6 @@ const mutations = {
   isClientLoaded (state, bool) {
     state.isClientLoaded = bool
   },
-  updateUserInfo (state, userInfo) {
-    state.userInfo = userInfo
-    // eslint-disable-next-line no-console
-    console.log('Claims have been updated')
-  },
   error (state, data) {
     // eslint-disable-next-line no-console
     console.error(data.description)

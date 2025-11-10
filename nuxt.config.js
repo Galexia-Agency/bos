@@ -52,6 +52,7 @@ export default {
     '~plugins/vueInlineSVG',
     '~plugins/fontAwesome',
     '~plugins/axiosConcurrency',
+    '~plugins/axiosAccess',
     '~plugins/axiosLoading'
   ],
   /*

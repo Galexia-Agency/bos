@@ -1,3 +1,6 @@
+// ToDo
+//  Make an api axios instance for connecting to the api and another axios instance for all other requests
+
 // Axios Concurrency
 export default function ({ store, app: { $axios } }, inject) {
   // Only allow 1 request to the server at any one time so that we avoid issues with out of sync updated_at times

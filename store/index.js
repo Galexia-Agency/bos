@@ -3,7 +3,11 @@ import importedActions from '../actions'
 export const state = () => ({
   loading: false,
   isClientLoaded: false,
-  userInfo: [],
+  // Default values for me now that we're not using Okta
+  userInfo: {
+    email: 'joe@galexia.agency',
+    groups: ['admin', 'billing']
+  },
   clients: [],
   contacts: [],
   domains: [],
@@ -31,24 +35,8 @@ export const state = () => ({
 })
 
 export const actions = {
-  async nuxtClientInit ({ commit, dispatch, state }, { route, $axios, app }) {
+  async nuxtClientInit ({ commit, dispatch }, { $axios }) {
     commit('isClientLoaded', false)
-    if (
-      (route &&
-      route.name &&
-      route.name === 'login') ||
-      (app &&
-      app.router &&
-      app.router.app &&
-      app.router.app._route &&
-      app.router.app._route.name &&
-      app.router.app._route.name === 'login')
-    ) {
-      // We do this to go home as soon as possible
-      app.router.push('/')
-      // We then have to do this to stop nuxt redirecting back to the login page when it's initialised
-      window.onNuxtReady(() => { app.router.push('/') })
-    }
     // eslint-disable-next-line no-console
     console.log('Starting the initial get')
     await Promise.all([
