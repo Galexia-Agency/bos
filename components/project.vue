@@ -286,16 +286,15 @@ export default {
       }
     },
     sse_start () {
-      this.timeout = window.setTimeout(async () => {
+      this.timeout = window.setTimeout(() => {
         if (!this.isRenewingTokens && document.visibilityState === 'visible') {
           const id = this.project.id
-          const authToken = `Bearer ${await this.$auth.getAccessToken()}`
           const self = this
           const url = `https://api.galexia.agency/projects/sse?id=${id}`
           if (window.Worker) {
             if (!this.sseWorker) {
               this.sseWorker = new Worker()
-              this.sseWorker.postMessage(['start', url, id, authToken])
+              this.sseWorker.postMessage(['start', url, id])
               this.sseWorker.onmessage = (e) => {
                 self.sse_updateProject(e.data)
               }
@@ -307,9 +306,6 @@ export default {
             }
           } else if (!this.sse) {
             this.sse = new EventSourcePolyfill(url, {
-              headers: {
-                Authorization: authToken
-              },
               withCredentials: false
             })
             this.sse.addEventListener(id, function (event) {

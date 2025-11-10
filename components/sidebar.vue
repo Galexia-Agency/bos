@@ -27,9 +27,6 @@
         <button v-if="userInfo.groups.includes('admin')" type="button" class="button primary" @click="$parent.showClientModal()">
           New Client
         </button>
-        <button type="button" class="button primary" @click="$logout()">
-          Logout
-        </button>
       </div>
       <input
         v-model="search"
