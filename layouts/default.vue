@@ -404,7 +404,7 @@
 <template>
   <div>
     <Loading />
-    <div v-if="isAuthenticated && isClientLoaded" class="contentWrapper">
+    <div v-if="isClientLoaded" class="contentWrapper">
       <ui-modal
         ref="modal"
         :active="error.active"
@@ -459,29 +459,11 @@ export default {
   computed: {
     ...mapState([
       'error',
-      'isAuthenticated',
       'conflicts',
       'isClientLoaded'
     ])
   },
-  mounted () {
-    document.addEventListener('visibilitychange', this.handleVisibilityChange)
-  },
-  beforeDestroy () {
-    document.removeEventListener('visibilitychange', this.handleVisibilityChange)
-  },
   methods: {
-    /*
-      Although we have a timer running to renew the accessToken,
-      it is possible this timer got cleared by the browser putting the tab into a sleep mode.
-      When we navigate back to the tab, we call manuallyRenewTokens, which checks whether the timer is still running, and re-confirms our auth state
-    */
-    handleVisibilityChange () {
-      if (document.visibilityState === 'visible') {
-        // Renew tokens now as we've just got back to the page
-        this.$auth.manuallyRenewTokens()
-      }
-    },
     showClientModal (data) {
       this.modal.client = true
       const self = this

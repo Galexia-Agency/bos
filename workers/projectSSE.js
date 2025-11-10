@@ -7,11 +7,7 @@ onmessage = (e) => {
   if (type === 'start') {
     const url = e.data[1]
     const id = e.data[2]
-    const authToken = e.data[3]
     sse = new EventSourcePolyfill(url, {
-      headers: {
-        Authorization: authToken
-      },
       withCredentials: false
     })
     sse.addEventListener(id, (event) => {

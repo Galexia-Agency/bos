@@ -45,9 +45,6 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    '~plugins/logout',
-    '~plugins/okta',
-    '~plugins/manuallyRenewTokens',
     '~plugins/board',
     '~plugins/mixins/dates',
     '~plugins/mixins/urls',
@@ -55,8 +52,6 @@ export default {
     '~plugins/vueInlineSVG',
     '~plugins/fontAwesome',
     '~plugins/axiosConcurrency',
-    '~plugins/pauseAxiosWhilstRenewingTokens',
-    '~plugins/authHeaders',
     '~plugins/axiosLoading'
   ],
   /*
@@ -80,9 +75,6 @@ export default {
    ** Public Environment Variables
    */
   publicRuntimeConfig: {
-    OKTA_CLIENT_ID: process.env.OKTA_CLIENT_ID,
-    OKTA_ISSUER: process.env.OKTA_ISSUER,
-    OKTA_SCOPES: ['openid', 'profile', 'email', 'groups', 'offline_access'],
     PANDLE_COMPANY_ID: process.env.PANDLE_COMPANY_ID,
     COMPANY_INCORPORATION: process.env.COMPANY_INCORPORATION,
     TAX_YEAR_MONTH: process.env.TAX_YEAR_MONTH
