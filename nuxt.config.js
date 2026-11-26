@@ -77,8 +77,7 @@ export default {
    */
   publicRuntimeConfig: {
     PANDLE_COMPANY_ID: process.env.PANDLE_COMPANY_ID,
-    COMPANY_INCORPORATION: process.env.COMPANY_INCORPORATION,
-    TAX_YEAR_MONTH: process.env.TAX_YEAR_MONTH
+    COMPANY_INCORPORATION: process.env.COMPANY_INCORPORATION
   },
   pwa: {
     workbox: {

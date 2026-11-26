@@ -6,6 +6,11 @@
 
 ## Build Setup
 
+Yearly accounts run from 1 October to 30 September. Set `COMPANY_INCORPORATION`
+to the actual incorporation date. The initial September weeks are included in
+the first accounting period, ending on 30 September the following year. The
+current accounting period is marked YTD.
+
 ```bash
 # install dependencies
 $ yarn install
