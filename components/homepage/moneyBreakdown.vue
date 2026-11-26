@@ -8,33 +8,33 @@
         <tbody>
           <tr>
             <td>
-              Date of Incorportation
+              Date of Incorporation
             </td>
             <td v-text="humanReadableDate($config.COMPANY_INCORPORATION)" />
           </tr>
-          <template v-for="year, index in yearlyMoneyBreakdown">
-            <tr :key="index + '_divider'" class="divider" />
-            <tr :key="index + '_revenue'">
+          <template v-for="year in yearlyMoneyBreakdown">
+            <tr :key="year.label + '_divider'" class="divider" />
+            <tr :key="year.label + '_revenue'">
               <td>
-                {{ index }} Revenue
+                {{ year.label }} Revenue
               </td>
               <td v-text="'£' + year.revenue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')" />
             </tr>
-            <tr :key="index + '_expenses'">
+            <tr :key="year.label + '_expenses'">
               <td>
-                {{ index }} Expenses
+                {{ year.label }} Expenses
               </td>
               <td v-text="'-£' + year.expenses.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')" />
             </tr>
-            <tr :key="index + '_netProfit'">
+            <tr :key="year.label + '_netProfit'">
               <td>
-                {{ index }} Net Profit
+                {{ year.label }} Net Profit
               </td>
               <td v-text="'£' + year.netProfit.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')" />
             </tr>
-            <tr :key="index + '_netProfitMargin'">
+            <tr :key="year.label + '_netProfitMargin'">
               <td>
-                {{ index }} Net Profit Margin
+                {{ year.label }} Net Profit Margin
               </td>
               <td v-text="year.netProfitMargin.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '%'" />
             </tr>
@@ -74,6 +74,7 @@
 <script>
 import { mapState } from 'vuex'
 import ClientCompletion from './clientCompletion'
+import { buildYearlyAccounts } from '~/utils/yearlyAccounts'
 
 export default {
   name: 'MoneyBreakdown',
@@ -124,28 +125,7 @@ export default {
       return (this.allTimeNetProfit / this.allTimeRevenue) * 100
     },
     yearlyMoneyBreakdown () {
-      const a = {}
-      this.pandle.dashboard.monthlyCharts.forEach((month) => {
-        let date = new Date(month.month)
-        date.setMonth(date.getMonth() - (this.$config.TAX_YEAR_MONTH - 1))
-        date = date.getFullYear()
-        if (date === new Date().getFullYear()) {
-          date = 'YTD'
-        }
-        if (!a[date]) {
-          a[date] = {
-            revenue: 0,
-            expenses: 0,
-            netProfit: 0,
-            netProfitMargin: 0
-          }
-        }
-        a[date].revenue += parseFloat(month.sales)
-        a[date].expenses += parseFloat(month.expenses)
-        a[date].netProfit = a[date].revenue - a[date].expenses
-        a[date].netProfitMargin = (a[date].netProfit / a[date].revenue) * 100
-      })
-      return a
+      return buildYearlyAccounts(this.pandle.dashboard.monthlyCharts, this.$config.COMPANY_INCORPORATION)
     }
   }
 }

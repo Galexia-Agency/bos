@@ -5,6 +5,7 @@
   "author": "Galexia Creative Agency Ltd",
   "private": true,
   "scripts": {
+    "test:accounts": "node tests/yearlyAccounts.cjs",
     "start": "nuxt",
     "generate": "nuxt generate --modern --quiet --fail-on-error",
     "lint:scripts": "eslint --ext .js,.vue --ignore-path .gitignore .",
