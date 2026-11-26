@@ -70,7 +70,7 @@
         name="php"
         label="PHP Version"
         type="select"
-        :options="['7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6']"
+        :options="['', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5', '8.6']"
       />
       <ui-input
         v-model="github_url"
